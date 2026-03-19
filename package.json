@@ -1,0 +1,11 @@
+{
+  "name": "subagent_security_plugin",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.0"
+  },
+  "openclaw": {
+    "extensions": ["./src/index.ts"]
+  }
+}
