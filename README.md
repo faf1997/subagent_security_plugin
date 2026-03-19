@@ -1,27 +1,27 @@
 # subagent_security_plugin
 
-OpenClaw plugin that provides **optional** tools for sub-agents to run a **persistent local Python worker** via a strict stdin/stdout JSONL pipe.
+Plugin de OpenClaw que provee tools **opcionales** para que los subagentes ejecuten un **worker Python local persistente** a través de un pipe estricto **JSONL por stdin/stdout**.
 
-## Why
+## Por qué
 
-- You want sub-agents to **never** have access to `exec`.
-- You still need to run specific local actions (implemented in Python).
-- Therefore: expose **only** narrowly-scoped tools that route through a controlled Python process.
+- Querés que los subagentes **nunca** tengan acceso a `exec`.
+- Aun así necesitás ejecutar acciones locales específicas (implementadas en Python).
+- Por lo tanto: exponer **solo** tools de alcance acotado, que enrutan todo a través de un proceso Python controlado.
 
-## What this plugin provides
+## Qué provee este plugin
 
-Tools (all registered as `optional: true`):
+Tools (todas registradas como `optional: true`):
 
-- `python_pipe_echo` — rigid op: `echo`
-- `python_pipe_sha256` — rigid op: `sha256`
-- `python_pipe_call` — generic whitelisted op call (`allowedOps`)
+- `python_pipe_echo` — operación rígida: `echo`
+- `python_pipe_sha256` — operación rígida: `sha256`
+- `python_pipe_call` — llamada genérica a una operación en whitelist (`allowedOps`)
 
-> Security recommendation: for sub-agents, prefer the rigid tools (`python_pipe_echo`, `python_pipe_sha256`) and avoid allowlisting `python_pipe_call` unless you really need it.
+> Recomendación de seguridad: para subagentes, preferí las tools rígidas (`python_pipe_echo`, `python_pipe_sha256`) y evitá allowlistear `python_pipe_call` salvo que realmente lo necesites.
 
-## Python worker
+## Worker Python
 
-- Path: `worker/worker.py`
-- Protocol: JSONL over stdin/stdout
+- Ruta: `worker/worker.py`
+- Protocolo: JSONL por stdin/stdout
 
 Request:
 ```json
@@ -33,11 +33,11 @@ Response:
 {"id":"uuid","ok":true,"result":{"sha256":"..."}}
 ```
 
-## Configuration
+## Configuración
 
-In `~/.openclaw/openclaw.json`:
+En `~/.openclaw/openclaw.json`:
 
-1) Load/enable the plugin (example uses `plugins.load.paths`):
+1) Cargar/habilitar el plugin (el ejemplo usa `plugins.load.paths`):
 
 ```json5
 {
@@ -59,7 +59,7 @@ In `~/.openclaw/openclaw.json`:
 }
 ```
 
-2) Enforce sub-agent tool policy (deny `exec`, allow only these tools):
+2) Forzar la política de tools para subagentes (denegar `exec`, permitir solo estas tools):
 
 ```json5
 {
@@ -75,20 +75,20 @@ In `~/.openclaw/openclaw.json`:
 }
 ```
 
-Restart the gateway after config/plugin changes:
+Reiniciá el gateway después de cambios de config/plugin:
 
 ```bash
 openclaw gateway restart
 ```
 
-## Extending with new ops
+## Extender con nuevas operaciones
 
-Add a new operation in `worker/worker.py` (and include it in `OPS`). Then either:
+Agregá una nueva operación en `worker/worker.py` (e incluila en `OPS`). Luego, podés:
 
-- Add it to `allowedOps` and call it via `python_pipe_call` (less strict), or
-- Add a new rigid tool in `src/index.ts` that always calls that op (recommended for sub-agent safety).
+- Agregarla a `allowedOps` y llamarla vía `python_pipe_call` (menos estricto), o
+- Agregar una nueva tool rígida en `src/index.ts` que llame siempre esa operación (recomendado para seguridad de subagentes).
 
-## Notes
+## Notas
 
-- This plugin runs in-process with the OpenClaw Gateway (trusted code).
-- The model does **not** get `exec`; only your plugin spawns Python.
+- Este plugin corre **in-process** con el Gateway de OpenClaw (código confiable).
+- El modelo **no** recibe `exec`; solo tu plugin spawnea Python.
