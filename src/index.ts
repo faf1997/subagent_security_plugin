@@ -27,6 +27,25 @@ export default function register(api: any) {
   const enabled = cfg.enabled ?? true;
   if (!enabled) return;
 
+  // Make the policy explicit to *all* agents (main + subagents) at runtime.
+  // This helps models interpret the tool error correctly and avoid retry loops.
+  api.on("before_agent_start", async (event: any) => {
+    const mode = cfg.mode ?? "denylist";
+    const policyText =
+      `\n\n[openclaw-security]\n` +
+      `Policy: exec tool calls may be blocked by security rules (${mode}). ` +
+      `If an exec call is blocked you will receive an error message like ` +
+      `"exec blocked (...)". Do NOT attempt to bypass the block; instead, ` +
+      `ask the user for an allowed alternative (or request a config change).\n`;
+
+    // Best-effort: append a short notice; do not fail the run if the shape changes.
+    if (typeof event?.systemPrompt === "string") {
+      event.systemPrompt += policyText;
+    } else if (typeof event?.system === "string") {
+      event.system += policyText;
+    }
+  });
+
   const flags = cfg.caseInsensitive ?? true ? "i" : "";
 
   let allow: RegExp[] = [];
