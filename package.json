@@ -1,5 +1,5 @@
 {
-  "name": "subagent_security_plugin",
+  "name": "example_optional_tool_plugin",
   "private": true,
   "type": "module",
   "dependencies": {

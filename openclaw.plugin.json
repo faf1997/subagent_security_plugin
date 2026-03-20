@@ -1,25 +1,16 @@
 {
-  "id": "subagent-security-python-pipe",
-  "name": "Subagent Security Python Pipe",
+  "id": "example-optional-tools",
+  "name": "Example Optional Tools",
   "version": "0.1.0",
-  "description": "Optional OpenClaw tools that route sub-agent actions through a strict, persistent Python worker (no exec exposed to the model).",
+  "description": "Ejemplo mínimo: plugin que registra una tool opcional (opt-in) para OpenClaw.",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
     "properties": {
-      "pythonBin": { "type": "string", "default": "python3" },
-      "workerPath": { "type": "string", "default": "{pluginDir}/worker/worker.py" },
-      "startupTimeoutMs": { "type": "number", "default": 5000 },
-      "requestTimeoutMs": { "type": "number", "default": 15000 },
-      "maxOutputBytes": { "type": "number", "default": 262144 },
-      "allowedOps": { "type": "array", "items": { "type": "string" }, "default": ["echo", "sha256"] }
+      "defaultName": { "type": "string", "default": "mundo" }
     }
   },
   "uiHints": {
-    "pythonBin": { "label": "Python binary", "placeholder": "python3" },
-    "workerPath": { "label": "Worker path", "placeholder": "{pluginDir}/worker/worker.py" },
-    "requestTimeoutMs": { "label": "Per-request timeout (ms)" },
-    "maxOutputBytes": { "label": "Max stdout bytes per response" },
-    "allowedOps": { "label": "Allowed operations (whitelist)" }
+    "defaultName": { "label": "Nombre por defecto", "placeholder": "mundo" }
   }
 }
