@@ -1,5 +1,5 @@
 {
-  "name": "subagent_security_plugin",
+  "name": "openclaw-security",
   "private": true,
   "type": "module",
   "dependencies": {
