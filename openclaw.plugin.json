@@ -1,16 +1,34 @@
 {
-  "id": "example-optional-tools",
-  "name": "Example Optional Tools",
+  "id": "openclaw-security",
+  "name": "OpenClaw Security",
   "version": "0.1.0",
-  "description": "Ejemplo mínimo: plugin que registra una tool opcional (opt-in) para OpenClaw.",
+  "description": "Security guardrails: filter/deny tool calls (exec) via before_tool_call hooks.",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
     "properties": {
-      "defaultName": { "type": "string", "default": "mundo" }
+      "exec": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": { "type": "boolean", "default": true },
+          "mode": { "type": "string", "enum": ["denylist", "allowlist"], "default": "denylist" },
+          "allow": { "type": "array", "items": { "type": "string" }, "default": [] },
+          "deny": { "type": "array", "items": { "type": "string" }, "default": [] },
+          "denyWords": { "type": "array", "items": { "type": "string" }, "default": [] },
+          "caseInsensitive": { "type": "boolean", "default": true },
+          "blockOnRegexError": { "type": "boolean", "default": true }
+        }
+      }
     }
   },
   "uiHints": {
-    "defaultName": { "label": "Nombre por defecto", "placeholder": "mundo" }
+    "exec.enabled": { "label": "Enable exec filtering" },
+    "exec.mode": { "label": "Mode", "placeholder": "denylist" },
+    "exec.allow": { "label": "Allow regex patterns" },
+    "exec.deny": { "label": "Deny regex patterns" },
+    "exec.denyWords": { "label": "Deny words" },
+    "exec.caseInsensitive": { "label": "Case-insensitive" },
+    "exec.blockOnRegexError": { "label": "Block when regex invalid" }
   }
 }

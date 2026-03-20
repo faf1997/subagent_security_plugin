@@ -1,5 +1,5 @@
 {
-  "name": "example_optional_tool_plugin",
+  "name": "openclaw-security",
   "private": true,
   "type": "module",
   "dependencies": {
