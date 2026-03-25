@@ -115,7 +115,13 @@ node dist/index.js plugins enable openclaw-security
 
 ### Configurar reglas (en `openclaw.json`)
 
-Una vez habilitado, agregá la configuración del plugin en `plugins.entries`:
+Una vez habilitado, agregá la configuración del plugin en `plugins.entries`.
+
+El plugin soporta:
+
+- **Reglas por agente (recomendado)**: `exec.policies.<agentId>.allow/deny/denyWords`
+- **Regla default**: `exec.defaultPolicy` (fallback)
+- **Legacy**: `exec.allow/deny/denyWords/mode` (si no definís `policies`)
 
 ```json5
 {
@@ -126,12 +132,29 @@ Una vez habilitado, agregá la configuración del plugin en `plugins.entries`:
         config: {
           exec: {
             enabled: true,
-            mode: "denylist", // o "allowlist"
-            denyWords: ["curl", "wget"],
-            deny: ["\\brm\\b", "\\bsudo\\b"],
-            allow: ["^git (status|diff)$"],
             caseInsensitive: true,
-            blockOnRegexError: true
+            blockOnRegexError: true,
+
+            // Fallback si un agentId no tiene policy
+            defaultPolicy: {
+              mode: "denylist",
+              deny: ["[;&|`$<>\\n\\r]"]
+            },
+
+            // Policies por agente
+            policies: {
+              security_proof: {
+                mode: "allowlist",
+                allow: ["^git status$"],
+                deny: ["\\brm\\b", "\\bsudo\\b"],
+                denyWords: ["curl", "wget"]
+              },
+              augusto: {
+                mode: "allowlist",
+                allow: ["^python3 /home/node/\\.openclaw/workspace-augusto/tools/augusto_helpdesk\\.py .*$"],
+                deny: ["[;&|`$<>\\n\\r]"]
+              }
+            }
           }
         }
       }
