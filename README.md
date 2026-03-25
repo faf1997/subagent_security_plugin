@@ -13,8 +13,8 @@ Guardrails de seguridad para OpenClaw mediante **plugin hooks**. Su objetivo es 
   - [Lógica de decisión (orden de evaluación)](#lógica-de-decisión-orden-de-evaluación)
   - [Esquema de configuración](#esquema-de-configuración)
 - [Instalación](#instalación)
-  - [Instalar desde path local (recomendado para dev)](#instalar-desde-path-local-recomendado-para-dev)
-  - [Habilitar el plugin en `openclaw.json`](#habilitar-el-plugin-en-openclawjson)
+  - [Pasos (install/enable)](#pasos-installenable)
+  - [Configurar reglas en `openclaw.json`](#configurar-reglas-en-openclawjson)
 - [Cómo probarlo](#cómo-probarlo)
   - [Caso 1: denylist](#caso-1-denylist)
   - [Caso 2: allowlist](#caso-2-allowlist)
@@ -89,7 +89,9 @@ El schema vive en [`openclaw.plugin.json`](./openclaw.plugin.json). En resumen:
 
 La forma recomendada de instalar este plugin es usando el **CLI de OpenClaw** (comandos `plugins install/enable`).
 
-### Pasos
+> Si preferís una guía más corta, ver también: [`INSTALL.md`](./INSTALL.md)
+
+### Pasos (install/enable)
 
 1) Clonar el repo en algún directorio accesible por OpenClaw (por ejemplo `user_plugins/` o un directorio personalizado):
 
@@ -97,23 +99,23 @@ La forma recomendada de instalar este plugin es usando el **CLI de OpenClaw** (c
 git clone git@github.com:faf1997/subagent_security_plugin.git /ruta/al/plugin
 ```
 
-3) Instalar el plugin indicando el **absolute path** al directorio del plugin:
+2) Instalar el plugin indicando el **absolute path** al directorio del plugin:
 
 ```bash
 node dist/index.js plugins install /ruta/al/plugin
 ```
 
-4) Habilitar el plugin:
+3) Habilitar el plugin:
 
 ```bash
 node dist/index.js plugins enable openclaw-security
 ```
 
-5) Reiniciar el Gateway (o el contenedor) para que tome el cambio.
+4) Reiniciar el Gateway (o el contenedor) para que tome el cambio.
 
 > Nota: `node dist/index.js ...` se ejecuta desde el directorio de OpenClaw (donde exista `dist/index.js`).
 
-### Configurar reglas (en `openclaw.json`)
+### Configurar reglas en `openclaw.json`
 
 Una vez habilitado, agregá la configuración del plugin en `plugins.entries`.
 
