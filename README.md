@@ -19,6 +19,7 @@ Guardrails de seguridad para OpenClaw mediante **plugin hooks**. Su objetivo es 
   - [Caso 1: denylist](#caso-1-denylist)
   - [Caso 2: allowlist](#caso-2-allowlist)
   - [Qué esperar al bloquear](#qué-esperar-al-bloquear)
+  - [Ejemplo completo: agente `security_proof` (TUI, allowlist mínima)](#ejemplo-completo-agente-security_proof-tui-allowlist-mínima)
 - [Notas de seguridad y límites](#notas-de-seguridad-y-límites)
 - [Desarrollo](#desarrollo)
 
@@ -218,6 +219,121 @@ Cuando el plugin bloquea:
 ```
 [openclaw-security] exec allowed agentId=... sessionKey=... cmd="..."
 ```
+
+---
+
+### Ejemplo completo: agente `security_proof` (TUI, allowlist mínima)
+
+Objetivo: crear un agente **solo para pruebas** que:
+
+- tenga `exec` habilitado, pero controlado por allowlist
+- pueda ejecutar únicamente:
+  - `git clone ...` (cualquier repo por SSH/HTTPS)
+  - `git status`
+  - `git -C <dir> status` (ver estado sin depender de `cd`)
+  - `cd <dir>` (nota: `cd` no persiste entre tool calls, pero se permite igual)
+- NO pueda ejecutar:
+  - `git diff`
+  - `ls`, `cat`, `rm`, etc.
+
+#### 1) Configurar el agente (sin Telegram, para probar desde TUI)
+
+En tu `openclaw.json` agregá un agente en `agents.list`:
+
+```json5
+{
+  agents: {
+    list: [
+      {
+        id: "security_proof",
+        workspace: "/home/node/.openclaw/workspace-security-proof",
+        tools: {
+          profile: "messaging",
+          alsoAllow: ["exec"]
+        }
+      }
+    ]
+  }
+}
+```
+
+> Importante: **no** necesitás agregar nada en `channels.telegram` ni en `bindings` para probarlo desde la TUI.
+
+#### 2) Configurar la policy del plugin por agente
+
+En `plugins.entries.openclaw-security.config.exec`:
+
+```json5
+{
+  plugins: {
+    entries: {
+      "openclaw-security": {
+        enabled: true,
+        config: {
+          exec: {
+            enabled: true,
+            caseInsensitive: true,
+            blockOnRegexError: true,
+
+            // (recomendado) bloqueos básicos globales
+            defaultPolicy: {
+              mode: "denylist",
+              deny: ["[;&|`$<>\\n\\r]"]
+            },
+
+            // Allowlist estricta SOLO para este agente
+            policies: {
+              security_proof: {
+                mode: "allowlist",
+                deny: ["[;&|`$<>\\n\\r]"],
+                allow: [
+                  "^git\\s+status$",
+                  "^git\\s+-C\\s+[^\\s]+\\s+status$",
+                  "^cd\\s+[^\\s]+$",
+
+                  // git clone (cualquier repo) — SSH o HTTPS
+                  "^git\\s+clone(?:\\s+(?:-b|--branch)\\s+[A-Za-z0-9._/-]+)?\\s+(?:git@[^\\s]+:[^\\s]+|https?://[^\\s]+)(?:\\s+[^\\s]+)?$"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+#### 3) Reiniciar el Gateway
+
+Reiniciá el gateway para que tome la config.
+
+#### 4) Probar desde la TUI
+
+Abrí la TUI apuntando al Gateway:
+
+```bash
+openclaw tui --url ws://127.0.0.1:18789 --token <GATEWAY_TOKEN> --session security_proof
+```
+
+(Alternativa si corrés en la misma máquina y ya tenés token configurado):
+
+```bash
+openclaw tui --session security_proof
+```
+
+En la conversación con el agente, pedile que pruebe estas llamadas a `exec`:
+
+- Permitidas:
+  - `git clone git@github.com:faf1997/security_proof.git`
+  - `git -C security_proof status`
+  - `git status`
+
+- Bloqueadas (lo esperado):
+  - `git diff` → `exec blocked (not in allowlist)`
+  - `ls` → `exec blocked (not in allowlist)`
+
+> Nota: aunque se permita `cd`, normalmente no te sirve para “persistir” directorio entre tool calls. Para inspección, preferí `git -C <dir> status`.
 
 ---
 
