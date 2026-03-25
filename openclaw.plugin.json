@@ -17,18 +17,47 @@
           "deny": { "type": "array", "items": { "type": "string" }, "default": [] },
           "denyWords": { "type": "array", "items": { "type": "string" }, "default": [] },
           "caseInsensitive": { "type": "boolean", "default": true },
-          "blockOnRegexError": { "type": "boolean", "default": true }
+          "blockOnRegexError": { "type": "boolean", "default": true },
+
+          "policies": {
+            "type": "object",
+            "description": "Per-agent exec policy overrides. Key = agentId.",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": { "type": "string", "enum": ["denylist", "allowlist"] },
+                "allow": { "type": "array", "items": { "type": "string" }, "default": [] },
+                "deny": { "type": "array", "items": { "type": "string" }, "default": [] },
+                "denyWords": { "type": "array", "items": { "type": "string" }, "default": [] }
+              }
+            },
+            "default": {}
+          },
+          "defaultPolicy": {
+            "type": "object",
+            "description": "Fallback policy when agentId has no entry in policies. If omitted, uses top-level allow/deny/denyWords/mode.",
+            "additionalProperties": false,
+            "properties": {
+              "mode": { "type": "string", "enum": ["denylist", "allowlist"] },
+              "allow": { "type": "array", "items": { "type": "string" }, "default": [] },
+              "deny": { "type": "array", "items": { "type": "string" }, "default": [] },
+              "denyWords": { "type": "array", "items": { "type": "string" }, "default": [] }
+            }
+          }
         }
       }
     }
   },
   "uiHints": {
     "exec.enabled": { "label": "Enable exec filtering" },
-    "exec.mode": { "label": "Mode", "placeholder": "denylist" },
-    "exec.allow": { "label": "Allow regex patterns" },
-    "exec.deny": { "label": "Deny regex patterns" },
-    "exec.denyWords": { "label": "Deny words" },
+    "exec.mode": { "label": "Mode (legacy / default)" },
+    "exec.allow": { "label": "Allow regex patterns (legacy / default)" },
+    "exec.deny": { "label": "Deny regex patterns (legacy / default)" },
+    "exec.denyWords": { "label": "Deny words (legacy / default)" },
     "exec.caseInsensitive": { "label": "Case-insensitive" },
-    "exec.blockOnRegexError": { "label": "Block when regex invalid" }
+    "exec.blockOnRegexError": { "label": "Block when regex invalid" },
+    "exec.policies": { "label": "Per-agent policies (agentId → rules)" },
+    "exec.defaultPolicy": { "label": "Default policy override" }
   }
 }
