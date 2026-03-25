@@ -87,40 +87,37 @@ El schema vive en [`openclaw.plugin.json`](./openclaw.plugin.json). En resumen:
 
 ## Instalación
 
-### Instalar desde path local (recomendado para dev)
+La forma recomendada de instalar este plugin es usando el **CLI de OpenClaw** (comandos `plugins install/enable`).
 
-1) Clonar este repo en el host donde corre OpenClaw:
+### Pasos (end-to-end)
+
+1) Crear el plugin en un repositorio (este repo).
+
+2) Clonar el repo en algún directorio accesible por OpenClaw (por ejemplo `user_plugins/` o un directorio personalizado):
 
 ```bash
-git clone git@github.com:faf1997/subagent_security_plugin.git
-cd subagent_security_plugin
+git clone git@github.com:faf1997/subagent_security_plugin.git /ruta/al/plugin
 ```
 
-2) En `openclaw.json`, registrar el plugin como instalación por path.
+3) Instalar el plugin indicando el **absolute path** al directorio del plugin:
 
-> Nota: tu instalación de OpenClaw soporta `plugins.installs` con `source:"path"` (ejemplo real en tu `MEMORY.md`).
-
-Ejemplo:
-
-```json5
-{
-  plugins: {
-    installs: {
-      "openclaw-security": {
-        source: "path",
-        sourcePath: "/ABS/PATH/subagent_security_plugin",
-        installPath: "/home/node/.openclaw/extensions/openclaw-security"
-      }
-    }
-  }
-}
+```bash
+node dist/index.js plugins install /ruta/al/plugin
 ```
 
-3) Reiniciar OpenClaw para que instale/cargue el plugin.
+4) Habilitar el plugin:
 
-### Habilitar el plugin en `openclaw.json`
+```bash
+node dist/index.js plugins enable openclaw-security
+```
 
-Agregar una entrada en `plugins.entries`:
+5) Reiniciar el Gateway (o el contenedor) para que tome el cambio.
+
+> Nota: `node dist/index.js ...` se ejecuta desde el directorio de OpenClaw (donde exista `dist/index.js`).
+
+### Configurar reglas (en `openclaw.json`)
+
+Una vez habilitado, agregá la configuración del plugin en `plugins.entries`:
 
 ```json5
 {
