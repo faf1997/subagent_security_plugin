@@ -89,11 +89,9 @@ El schema vive en [`openclaw.plugin.json`](./openclaw.plugin.json). En resumen:
 
 La forma recomendada de instalar este plugin es usando el **CLI de OpenClaw** (comandos `plugins install/enable`).
 
-### Pasos (end-to-end)
+### Pasos
 
-1) Crear el plugin en un repositorio (este repo).
-
-2) Clonar el repo en algún directorio accesible por OpenClaw (por ejemplo `user_plugins/` o un directorio personalizado):
+1) Clonar el repo en algún directorio accesible por OpenClaw (por ejemplo `user_plugins/` o un directorio personalizado):
 
 ```bash
 git clone git@github.com:faf1997/subagent_security_plugin.git /ruta/al/plugin
