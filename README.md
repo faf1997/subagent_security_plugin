@@ -308,7 +308,48 @@ En `plugins.entries.openclaw-security.config.exec`:
 
 Reiniciá el gateway para que tome la config.
 
-#### 4) Probar desde la TUI
+#### 4) Criterios de aceptación (para este mismo ejemplo)
+
+**Precondiciones**
+
+- El plugin `openclaw-security` está **habilitado**.
+- El agente `security_proof` existe y tiene `exec` habilitado (`alsoAllow: ["exec"]`).
+- La policy `policies.security_proof.mode = "allowlist"` está aplicada y el gateway reiniciado.
+
+**AC1 — Permite `git status`**
+
+- **Dado** el agente `security_proof` en TUI
+- **Cuando** el agente ejecuta `git status`
+- **Entonces** el comando **se ejecuta** (no aparece `exec blocked`) y devuelve salida válida de git.
+
+**AC2 — Bloquea `git diff`**
+
+- **Cuando** el agente ejecuta `git diff`
+- **Entonces** debe bloquearse con razón que contenga:
+  - `exec blocked (not in allowlist)`
+
+**AC3 — Permite `git clone`**
+
+- **Cuando** el agente ejecuta `git clone git@github.com:faf1997/security_proof.git`
+- **Entonces** el comando **no debe ser bloqueado** por el plugin (no `exec blocked`) y debe mostrar `Cloning into ...` o finalizar sin error.
+
+**AC4 — Permite verificar sin `cd` (`git -C`)**
+
+- **Cuando** el agente ejecuta `git -C security_proof status`
+- **Entonces** el comando **se ejecuta** y retorna un status válido.
+
+**AC5 — Bloquea comandos fuera de allowlist**
+
+- **Cuando** el agente intenta ejecutar `ls` (o cualquier comando no contemplado)
+- **Entonces** debe bloquearse con:
+  - `exec blocked (not in allowlist)`
+
+**AC6 — Bloquea chaining / metacaracteres**
+
+- **Cuando** el agente intenta `git status; whoami`
+- **Entonces** debe bloquearse con una razón que contenga `deny pattern` (por ejemplo el patrón base `[;&|`$<>\n\r]`).
+
+#### 5) Probar desde la TUI
 
 Abrí la TUI apuntando al Gateway:
 
