@@ -97,7 +97,7 @@ La forma recomendada de instalar este plugin es usando el **CLI de OpenClaw** (c
 1) Clonar el repo en algún directorio accesible por OpenClaw (por ejemplo `user_plugins/` o un directorio personalizado):
 
 ```bash
-git clone git@github.com:faf1997/subagent_security_plugin.git /ruta/al/plugin
+git clone https://github.com/faf1997/subagent_security_plugin.git /ruta/al/plugin
 ```
 
 2) Instalar el plugin indicando el **absolute path** al directorio del plugin:
