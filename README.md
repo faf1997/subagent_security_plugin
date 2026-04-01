@@ -145,7 +145,7 @@ El plugin soporta:
             },
 
             // Policies por agente
-            policies: {
+            <agentId>: {
               security_proof: {
                 mode: "allowlist",
                 allow: ["^git status$"],
