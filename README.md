@@ -145,14 +145,14 @@ El plugin soporta:
             },
 
             // Policies por agente
-            <agentId>: {
+            policies: {
               security_proof: {
                 mode: "allowlist",
                 allow: ["^git status$"],
                 deny: ["\\brm\\b", "\\bsudo\\b"],
                 denyWords: ["curl", "wget"]
               },
-              augusto: {
+              <agentId>: {
                 mode: "allowlist",
                 allow: ["^python3 /home/node/\\.openclaw/workspace-augusto/tools/augusto_helpdesk\\.py .*$"],
                 deny: ["[;&|`$<>\\n\\r]"]
