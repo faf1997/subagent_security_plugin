@@ -2,8 +2,15 @@
   "name": "openclaw-security",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "@sinclair/typebox": "^0.34.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.0.0"
   },
   "openclaw": {
     "extensions": ["./src/index.ts"]
